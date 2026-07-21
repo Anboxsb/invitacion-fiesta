@@ -64,7 +64,7 @@
       }
     }
 
-    /* CONTENEDOR DEL SOBRE 3D */
+    /* SOBRE INTERACTIVO 3D */
     .envelope-wrapper {
       cursor: pointer;
       text-align: center;
@@ -147,7 +147,7 @@
       animation: pulse 1.5s infinite;
     }
 
-    /* CONTROLES DE MÚSICA FLOTANTES */
+    /* BOTÓN FLOTANTE DE MÚSICA */
     .music-control {
       position: fixed;
       bottom: 20px;
@@ -261,21 +261,21 @@
 </head>
 <body>
 
-  <!-- CONTENEDOR DE PÉTALOS ROSAS CAYENDO -->
+  <!-- PÉTALOS ROSAS CAYENDO -->
   <div id="petals-container"></div>
 
-  <!-- ELEMENTO AUDIO HTML5 NATIVO (REPRODUCCIÓN GLOBAL) -->
-  <audio id="bg-music" loop preload="auto" crossorigin="anonymous">
-    <source src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=flowers-112349.mp3" type="audio/mpeg">
+  <!-- AUDIO MP3 ("Flowers" de Miley Cyrus) -->
+  <audio id="bg-music" loop preload="auto">
+    <source src="https://ia801602.us.archive.org/11/items/miley-cyrus-flowers/Miley%20Cyrus%20-%20Flowers.mp3" type="audio/mpeg">
   </audio>
 
-  <!-- BOTÓN DE MÚSICA REPRODUCIR / PAUSAR -->
+  <!-- BOTÓN PARA PAUSAR / REANUDAR MÚSICA -->
   <div class="music-control" id="music-btn" onclick="toggleMusic()">
     <span id="music-icon">🎵</span>
     <span id="music-text">Música: On</span>
   </div>
 
-  <!-- SOBRE CERRADO CON SOLAPA -->
+  <!-- SOBRE CERRADO (BOTÓN DE APERTURA Y REPRODUCCIÓN) -->
   <div class="envelope-wrapper" id="envelope-wrapper" onclick="openEnvelope()">
     <div class="envelope-btn">
       <div class="envelope-flap" id="envelope-flap"></div>
@@ -287,7 +287,7 @@
     <p class="tap-hint">Toca el sobre para abrir ✉️</p>
   </div>
 
-  <!-- TARJETA DE INVITACIÓN -->
+  <!-- TARJETA DESPLEGADA -->
   <div class="card" id="card">
     <h2>Los invitamos a festejar nuestro cambio de década (60 y 70)</h2>
     <div class="subtitle">Y nuestro Aniversario N° 10</div>
@@ -313,7 +313,7 @@
       <span class="value">Sport Elegante</span>
     </div>
 
-    <!-- Modifica el número de WhatsApp aquí -->
+    <!-- Cambia el número de teléfono aquí -->
     <a href="https://wa.me/59899000000?text=¡Hola!%20Confirmo%20mi%20asistencia%20a%20la%20fiesta." class="btn-confirm" target="_blank">
       Confirmar Asistencia 📲
     </a>
@@ -322,7 +322,7 @@
   <script>
     const audio = document.getElementById('bg-music');
 
-    // CREACIÓN CONSTANTE DE PÉTALOS ROSAS CAYENDO
+    // CREACIÓN CONSTANTE DE PÉTALOS ROSAS
     function createPetals() {
       const container = document.getElementById('petals-container');
       const petalCount = 25;
@@ -352,27 +352,28 @@
       }
     }
 
-    // ABRIR SOBRE Y REPRODUCIR MÚSICA EN TODA LA PÁGINA
+    // AL HACER CLIC EN EL SOBRE: ABRE EL SOBRE Y DISPARA LA MÚSICA
     function openEnvelope() {
-      // 1. Abrir solapa del sobre
+      // 1. Animación de apertura de la solapa
       const flap = document.getElementById('envelope-flap');
       flap.style.transform = 'rotateX(180deg)';
 
-      // 2. Iniciar audio global
+      // 2. Arrancar la música desde el segundo 30
+      audio.currentTime = 30;
       audio.play().then(() => {
-        console.log("Música sonando en toda la página.");
+        console.log("Música iniciada correctamente");
       }).catch(err => {
-        console.log("Error al reproducir audio:", err);
+        console.log("Bloqueo de audio:", err);
       });
 
-      // 3. Ocultar sobre y desplegar invitación
+      // 3. Mostrar la tarjeta e interfaz tras 400ms
       setTimeout(() => {
         document.getElementById('envelope-wrapper').style.display = 'none';
         document.getElementById('card').style.display = 'block';
         document.getElementById('music-btn').style.display = 'flex';
       }, 400);
 
-      // 4. Lluvia de confeti / flores
+      // 4. Lluvia de confeti/flores
       var scalar = 2.2;
       var flower = confetti.shapeFromText({ text: '🌸', scalar });
       var rose = confetti.shapeFromText({ text: '🌹', scalar });
@@ -388,7 +389,7 @@
       });
     }
 
-    // BOTÓN MÚSICA ON / OFF
+    // BOTÓN DE MÚSICA ON / OFF
     function toggleMusic() {
       const text = document.getElementById('music-text');
       const icon = document.getElementById('music-icon');
