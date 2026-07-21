@@ -107,7 +107,6 @@
   </div>
 
   <script>
-    // URL OFICIAL DE LA APLICACIÓN WEB ACTUALIZADA CON LA BIBLIOTECA V2
     const API_URL = "https://script.google.com/macros/s/AKfycbzTBf3iGDPhC4w83LqVm8J06mhe1y-uoqmZ9Oho4PEly-ZMmS5rZz_NwLn8dQDly5WI/exec";
 
     async function loadAttendees() {
@@ -117,19 +116,21 @@
 
         document.getElementById('loading').style.display = 'none';
         document.getElementById('attendeesTable').style.display = 'table';
-        document.getElementById('counter').innerText = `Total Confirmados: ${data.length} persona(s)`;
+        
+        updateCounter(data.length);
 
         const tableBody = document.getElementById('tableBody');
         tableBody.innerHTML = '';
 
-        data.reverse().forEach(row => {
+        data.reverse().forEach((row, index) => {
           const tr = document.createElement('tr');
+          tr.id = `row-${index}`;
           tr.innerHTML = `
             <td><strong>${row.Nombre || '-'}</strong></td>
             <td>${row.Apellido || '-'}</td>
             <td><a href="tel:${row.Telefono}" style="color: #25d366; text-decoration: none; font-weight: 600;">${row.Telefono || '-'}</a></td>
             <td>
-              <button class="btn-delete" onclick="deleteGuest('${row.Nombre}', '${row.Telefono}')">🗑️ Eliminar</button>
+              <button class="btn-delete" onclick="deleteGuest('${row.Nombre}', '${row.Telefono}', 'row-${index}')">🗑️ Eliminar</button>
             </td>
           `;
           tableBody.appendChild(tr);
@@ -139,9 +140,24 @@
       }
     }
 
-    async function deleteGuest(nombre, telefono) {
+    function updateCounter(count) {
+      document.getElementById('counter').innerText = `Total Confirmados: ${count} persona(s)`;
+    }
+
+    async function deleteGuest(nombre, telefono, rowId) {
       if (!confirm(`¿Estás seguro de que quieres eliminar a ${nombre}?`)) return;
 
+      // 1. Ocultar inmediatamente la fila de la pantalla
+      const row = document.getElementById(rowId);
+      if (row) {
+        row.style.display = 'none';
+      }
+
+      // 2. Actualizar el contador de confirmados en tiempo real
+      const visibleRows = document.querySelectorAll('#tableBody tr:not([style*="display: none"])');
+      updateCounter(visibleRows.length);
+
+      // 3. Enviar orden de borrado a Google Sheets
       const payload = {
         action: "delete",
         Nombre: nombre,
@@ -155,11 +171,8 @@
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload)
         });
-
-        alert("Solicitud de eliminación enviada.");
-        setTimeout(loadAttendees, 1000); // Recargar la lista tras 1 segundo
       } catch (err) {
-        alert("Hubo un problema al eliminar.");
+        console.error("Error al enviar solicitud de eliminación:", err);
       }
     }
 
