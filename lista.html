@@ -107,6 +107,7 @@
   </div>
 
   <script>
+    // URL OFICIAL DE LA APLICACIÓN WEB ACTUALIZADA CON LA BIBLIOTECA V2
     const API_URL = "https://script.google.com/macros/s/AKfycbzTBf3iGDPhC4w83LqVm8J06mhe1y-uoqmZ9Oho4PEly-ZMmS5rZz_NwLn8dQDly5WI/exec";
 
     async function loadAttendees() {
@@ -134,7 +135,7 @@
           tableBody.appendChild(tr);
         });
       } catch (error) {
-        document.getElementById('loading').innerText = "Error al cargar los datos. Revisa la conexión.";
+        document.getElementById('loading').innerText = "Error al cargar los datos. Revisa la conexión o los permisos del App Script.";
       }
     }
 
@@ -155,8 +156,8 @@
           body: JSON.stringify(payload)
         });
 
-        alert("Registro eliminado correctamente.");
-        loadAttendees(); // Recargar la lista
+        alert("Solicitud de eliminación enviada.");
+        setTimeout(loadAttendees, 1000); // Recargar la lista tras 1 segundo
       } catch (err) {
         alert("Hubo un problema al eliminar.");
       }
