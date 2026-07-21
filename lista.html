@@ -14,7 +14,7 @@
       padding: 20px;
     }
     .container {
-      max-width: 800px;
+      max-width: 850px;
       margin: 0 auto;
       background: white;
       padding: 25px;
@@ -47,7 +47,7 @@
       margin-top: 10px;
     }
     th, td {
-      padding: 12px 15px;
+      padding: 12px 10px;
       text-align: left;
       border-bottom: 1px solid #eee;
     }
@@ -63,8 +63,23 @@
       padding: 20px;
       color: #888;
     }
+    .btn-delete {
+      background: #ff4d4d;
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.8rem;
+      transition: background 0.2s;
+    }
+    .btn-delete:hover {
+      background: #cc0000;
+    }
     @media (max-width: 600px) {
-      th, td { font-size: 0.85rem; padding: 10px 8px; }
+      th, td { font-size: 0.8rem; padding: 8px 5px; }
+      .btn-delete { padding: 4px 8px; font-size: 0.75rem; }
     }
   </style>
 </head>
@@ -84,7 +99,7 @@
           <th>Nombre</th>
           <th>Apellido</th>
           <th>Teléfono</th>
-          <th>Fecha Confirmación</th>
+          <th>Acción</th>
         </tr>
       </thead>
       <tbody id="tableBody"></tbody>
@@ -92,7 +107,7 @@
   </div>
 
   <script>
-    const API_URL = "https://api.sheetbest.com/sheets/7465b919-db5c-4d50-8ac7-d01f3e1fbe08";
+    const API_URL = "https://script.google.com/macros/s/AKfycbzTBf3iGDPhC4w83LqVm8J06mhe1y-uoqmZ9Oho4PEly-ZMmS5rZz_NwLn8dQDly5WI/exec";
 
     async function loadAttendees() {
       try {
@@ -112,12 +127,38 @@
             <td><strong>${row.Nombre || '-'}</strong></td>
             <td>${row.Apellido || '-'}</td>
             <td><a href="tel:${row.Telefono}" style="color: #25d366; text-decoration: none; font-weight: 600;">${row.Telefono || '-'}</a></td>
-            <td style="font-size: 0.85rem; color: #777;">${row.Fecha || '-'}</td>
+            <td>
+              <button class="btn-delete" onclick="deleteGuest('${row.Nombre}', '${row.Telefono}')">🗑️ Eliminar</button>
+            </td>
           `;
           tableBody.appendChild(tr);
         });
       } catch (error) {
         document.getElementById('loading').innerText = "Error al cargar los datos. Revisa la conexión.";
+      }
+    }
+
+    async function deleteGuest(nombre, telefono) {
+      if (!confirm(`¿Estás seguro de que quieres eliminar a ${nombre}?`)) return;
+
+      const payload = {
+        action: "delete",
+        Nombre: nombre,
+        Telefono: telefono
+      };
+
+      try {
+        await fetch(API_URL, {
+          method: "POST",
+          mode: "no-cors",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+
+        alert("Registro eliminado correctamente.");
+        loadAttendees(); // Recargar la lista
+      } catch (err) {
+        alert("Hubo un problema al eliminar.");
       }
     }
 
