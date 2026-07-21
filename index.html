@@ -4,17 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>¡Fiesta! - Invitación</title>
-  <!-- Fuentes elegantes y festivas -->
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Playfair+Display:ital,wght@0,600;1,400&display=swap" rel="stylesheet">
-  <!-- Librería para el efecto de flores/confeti al abrir -->
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       background: #f4efe9;
       font-family: 'Montserrat', sans-serif;
@@ -27,23 +21,16 @@
       position: relative;
     }
 
-    /* PÉTALOS ROSAS CAYENDO CONSTANTEMENTE */
     #petals-container {
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-      z-index: 999;
-      overflow: hidden;
+      top: 0; left: 0; width: 100%; height: 100%;
+      pointer-events: none; z-index: 999; overflow: hidden;
     }
 
     .petal {
       position: absolute;
       background: radial-gradient(circle at 30% 30%, #ffb7c5, #ff69b4);
-      border-radius: 15px 0px 15px 0px;
-      opacity: 0.8;
+      border-radius: 15px 0px 15px 0px; opacity: 0.8;
       box-shadow: 0 2px 5px rgba(0,0,0,0.1);
       animation: fall linear infinite;
     }
@@ -54,237 +41,81 @@
       100% { top: 110%; transform: translateX(-50px) rotate(360deg); opacity: 0.2; }
     }
 
-    /* SOBRE INTERACTIVO 3D */
-    .envelope-wrapper {
-      cursor: pointer;
-      text-align: center;
-      z-index: 10;
-      perspective: 1000px;
-    }
-
+    .envelope-wrapper { cursor: pointer; text-align: center; z-index: 10; perspective: 1000px; }
     .envelope-btn {
-      width: 300px;
-      height: 200px;
-      background: #d4af37;
-      position: relative;
-      border-radius: 0 0 12px 12px;
-      box-shadow: 0 15px 35px rgba(0,0,0,0.25);
-      margin: 0 auto;
-      transition: transform 0.3s ease;
-      display: flex;
-      justify-content: center;
-      align-items: center;
+      width: 300px; height: 200px; background: #d4af37;
+      position: relative; border-radius: 0 0 12px 12px;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.25); margin: 0 auto;
+      transition: transform 0.3s ease; display: flex; justify-content: center; align-items: center;
     }
-
-    .envelope-wrapper:hover .envelope-btn {
-      transform: translateY(-5px) scale(1.02);
-    }
+    .envelope-wrapper:hover .envelope-btn { transform: translateY(-5px) scale(1.02); }
 
     .envelope-flap {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 0;
-      height: 0;
-      border-left: 150px solid transparent;
-      border-right: 150px solid transparent;
-      border-top: 115px solid #b89228;
-      transform-origin: top;
-      transition: transform 0.5s ease;
-      z-index: 4;
+      position: absolute; top: 0; left: 0; width: 0; height: 0;
+      border-left: 150px solid transparent; border-right: 150px solid transparent;
+      border-top: 115px solid #b89228; transform-origin: top; transition: transform 0.5s ease; z-index: 4;
     }
-
     .envelope-btn::before {
-      content: '';
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      width: 0;
-      height: 0;
-      border-left: 150px solid #c49f2c;
-      border-right: 150px solid #c49f2c;
-      border-bottom: 100px solid #d4af37;
-      border-radius: 0 0 12px 12px;
-      z-index: 3;
+      content: ''; position: absolute; bottom: 0; left: 0; width: 0; height: 0;
+      border-left: 150px solid #c49f2c; border-right: 150px solid #c49f2c;
+      border-bottom: 100px solid #d4af37; border-radius: 0 0 12px 12px; z-index: 3;
     }
 
-    .envelope-text {
-      position: relative;
-      z-index: 5;
-      color: #ffffff;
-      text-shadow: 1px 2px 4px rgba(0,0,0,0.4);
-      margin-top: 30px;
-    }
+    .envelope-text { position: relative; z-index: 5; color: #ffffff; text-shadow: 1px 2px 4px rgba(0,0,0,0.4); margin-top: 30px; }
+    .envelope-text h1 { font-family: 'Playfair Display', serif; font-size: 2.2rem; letter-spacing: 3px; }
+    .tap-hint { margin-top: 22px; color: #555; font-size: 0.95rem; font-weight: 600; animation: pulse 1.5s infinite; }
 
-    .envelope-text h1 {
-      font-family: 'Playfair Display', serif;
-      font-size: 2.2rem;
-      letter-spacing: 3px;
-    }
-
-    .envelope-text .music-notes {
-      font-size: 1.5rem;
-      margin-top: 4px;
-    }
-
-    .tap-hint {
-      margin-top: 22px;
-      color: #555;
-      font-size: 0.95rem;
-      font-weight: 600;
-      animation: pulse 1.5s infinite;
-    }
-
-    /* BOTÓN FLOTANTE DE MÚSICA (ARRIBA A LA DERECHA) */
     .music-control {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      background: rgba(255, 255, 255, 0.9);
-      backdrop-filter: blur(4px);
-      border: 2px solid #d4af37;
-      border-radius: 50px;
-      padding: 8px 16px;
-      display: none;
-      align-items: center;
-      gap: 8px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.15);
-      z-index: 1000;
-      cursor: pointer;
-      font-size: 0.85rem;
-      font-weight: 600;
-      color: #333;
-      transition: transform 0.2s ease;
+      position: fixed; top: 20px; right: 20px;
+      background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(4px);
+      border: 2px solid #d4af37; border-radius: 50px; padding: 8px 16px;
+      display: none; align-items: center; gap: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+      z-index: 1000; cursor: pointer; font-size: 0.85rem; font-weight: 600; color: #333;
     }
 
-    .music-control:hover {
-      transform: scale(1.05);
-    }
-
-    /* TARJETA DE INVITACIÓN */
     .card {
-      display: none;
-      background: rgba(255, 255, 255, 0.96);
-      backdrop-filter: blur(5px);
-      max-width: 460px;
-      width: 100%;
-      padding: 30px 22px;
-      border-radius: 20px;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.12);
-      text-align: center;
-      border: 1px solid #f0e6d2;
-      animation: fadeIn 1s ease forwards;
-      z-index: 10;
-      max-height: 90vh;
-      overflow-y: auto;
+      display: none; background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(5px); max-width: 460px; width: 100%;
+      padding: 30px 22px; border-radius: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.12);
+      text-align: center; border: 1px solid #f0e6d2; animation: fadeIn 1s ease forwards;
+      z-index: 10; max-height: 90vh; overflow-y: auto;
     }
+    .card h2 { font-family: 'Playfair Display', serif; color: #2c3e50; font-size: 1.3rem; margin-bottom: 8px; }
+    .card .subtitle { color: #d4af37; font-weight: 700; font-size: 1.1rem; margin-bottom: 18px; text-transform: uppercase; }
 
-    .card h2 {
-      font-family: 'Playfair Display', serif;
-      color: #2c3e50;
-      font-size: 1.3rem;
-      margin-bottom: 8px;
-    }
-    .card .subtitle {
-      color: #d4af37;
-      font-weight: 700;
-      font-size: 1.1rem;
-      margin-bottom: 18px;
-      text-transform: uppercase;
-    }
+    .info-group { margin: 12px 0; border-bottom: 1px dashed #e0e0e0; padding-bottom: 8px; }
+    .label { font-weight: 700; color: #d4af37; text-transform: uppercase; font-size: 0.8rem; display: block; }
+    .value { color: #333; font-size: 1rem; font-weight: 600; }
 
-    .info-group {
-      margin: 12px 0;
-      border-bottom: 1px dashed #e0e0e0;
-      padding-bottom: 8px;
-    }
-    .info-group:last-of-type {
-      border-bottom: none;
-    }
-    .label {
-      font-weight: 700;
-      color: #d4af37;
-      text-transform: uppercase;
-      font-size: 0.8rem;
-      display: block;
-    }
-    .value {
-      color: #333;
-      font-size: 1rem;
-      font-weight: 600;
-    }
-
-    /* FORMULARIO DE ASISTENCIA */
-    .rsvp-form {
-      margin-top: 18px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      text-align: left;
-    }
-    .rsvp-form input {
-      width: 100%;
-      padding: 12px;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      font-family: 'Montserrat', sans-serif;
-      font-size: 0.95rem;
-    }
-    .rsvp-form input:focus {
-      outline: none;
-      border-color: #d4af37;
-    }
+    .rsvp-form { margin-top: 18px; display: flex; flex-direction: column; gap: 10px; text-align: left; }
+    .rsvp-form input { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; font-family: 'Montserrat', sans-serif; font-size: 0.95rem; }
+    .rsvp-form input:focus { outline: none; border-color: #d4af37; }
+    
     .btn-submit {
-      background: #d4af37;
-      color: white;
-      border: none;
-      padding: 14px;
-      border-radius: 30px;
-      font-weight: 700;
-      font-size: 1rem;
-      cursor: pointer;
-      margin-top: 8px;
-      transition: background 0.3s;
+      background: #d4af37; color: white; border: none; padding: 14px;
+      border-radius: 30px; font-weight: 700; font-size: 1rem; cursor: pointer;
+      margin-top: 8px; transition: background 0.3s;
     }
-    .btn-submit:hover {
-      background: #b89228;
-    }
-    .success-msg {
-      display: none;
-      color: #25d366;
-      font-weight: 700;
-      margin-top: 15px;
-      font-size: 1.1rem;
-    }
+    .btn-submit:hover { background: #b89228; }
+    .success-msg { display: none; color: #25d366; font-weight: 700; margin-top: 15px; font-size: 1.1rem; }
 
-    @keyframes pulse {
-      0% { opacity: 0.6; transform: scale(1); }
-      50% { opacity: 1; transform: scale(1.03); }
-      100% { opacity: 0.6; transform: scale(1); }
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
+    @keyframes pulse { 0% { opacity: 0.6; } 50% { opacity: 1; } 100% { opacity: 0.6; } }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
   </style>
 </head>
 <body>
 
-  <!-- PÉTALOS CAYENDO -->
   <div id="petals-container"></div>
 
-  <!-- AUDIO LOCAL -->
   <audio id="bg-music" loop preload="auto">
     <source src="cancion.mp3" type="audio/mpeg">
   </audio>
 
-  <!-- BOTÓN DE MÚSICA ARRIBA A LA DERECHA -->
   <div class="music-control" id="music-btn" onclick="toggleMusic()">
     <span id="music-icon">🎵</span>
     <span id="music-text">Música: On</span>
   </div>
 
-  <!-- SOBRE CERRADO 3D -->
   <div class="envelope-wrapper" id="envelope-wrapper" onclick="openEnvelope()">
     <div class="envelope-btn">
       <div class="envelope-flap" id="envelope-flap"></div>
@@ -296,7 +127,6 @@
     <p class="tap-hint">Toca el sobre para abrir ✉️</p>
   </div>
 
-  <!-- TARJETA DE INVITACIÓN -->
   <div class="card" id="card">
     <h2>Los invitamos a festejar nuestro cambio de década (60 y 70)</h2>
     <div class="subtitle">Y nuestro Aniversario N° 10</div>
@@ -321,7 +151,6 @@
       <span class="value">Sport Elegante</span>
     </div>
 
-    <!-- FORMULARIO DE ASISTENCIA -->
     <form class="rsvp-form" id="rsvpForm" onsubmit="submitRSVP(event)">
       <span class="label" style="text-align: center; margin-top: 8px;">Confirmar Asistencia</span>
       <input type="text" id="nombre" placeholder="Nombre" required>
@@ -365,13 +194,15 @@
         document.getElementById('music-btn').style.display = 'flex';
       }, 400);
 
-      confetti({
-        shapes: ['🌸', '🌹', '✨'],
-        scalar: 2,
-        particleCount: 40,
-        spread: 100,
-        origin: { y: 0.6 }
-      });
+      if (typeof confetti === "function") {
+        confetti({
+          shapes: ['🌸', '🌹', '✨'],
+          scalar: 2,
+          particleCount: 40,
+          spread: 100,
+          origin: { y: 0.6 }
+        });
+      }
     }
 
     function toggleMusic() {
@@ -386,36 +217,42 @@
       }
     }
 
-    // ENVÍO DE DATOS A TU SHEETBEST
-    function submitRSVP(e) {
+    async function submitRSVP(e) {
       e.preventDefault();
       const btn = document.getElementById('btnSubmit');
       btn.innerText = "Enviando...";
       btn.disabled = true;
 
-      const data = {
-        Nombre: document.getElementById('nombre').value,
-        Apellido: document.getElementById('apellido').value,
-        Telefono: document.getElementById('telefono').value,
-        Fecha: new Date().toLocaleString()
-      };
+      const payload = [{
+        Nombre: document.getElementById('nombre').value.trim(),
+        Apellido: document.getElementById('apellido').value.trim(),
+        Telefono: document.getElementById('telefono').value.trim(),
+        Fecha: new Date().toLocaleString("es-UY")
+      }];
 
       const API_URL = "https://api.sheetbest.com/sheets/7465b919-db5c-4d50-8ac7-d01f3e1fbe08";
 
-      fetch(API_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data)
-      })
-      .then(res => {
-        document.getElementById('rsvpForm').style.display = 'none';
-        document.getElementById('successMsg').style.display = 'block';
-      })
-      .catch(err => {
-        alert("Hubo un error al enviar. Intenta nuevamente.");
+      try {
+        const response = await fetch(API_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(payload)
+        });
+
+        if (response.ok) {
+          document.getElementById('rsvpForm').style.display = 'none';
+          document.getElementById('successMsg').style.display = 'block';
+        } else {
+          throw new Error("Respuesta de SheetBest no OK: " + response.status);
+        }
+      } catch (err) {
+        console.error("Error al enviar a SheetBest:", err);
+        alert("Hubo un error al enviar. Por favor verifica los encabezados de tu planilla de Google Sheets (Nombre, Apellido, Telefono, Fecha).");
         btn.innerText = "Enviar Confirmación ✍️";
         btn.disabled = false;
-      });
+      }
     }
 
     window.onload = createPetals;
