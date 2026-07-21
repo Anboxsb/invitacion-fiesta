@@ -261,10 +261,10 @@
 </head>
 <body>
 
-  <!-- PÉTALOS ROSAS CAYENDO -->
+  <!-- PÉTALOS ROSAS CAYENDO CONSTANTEMENTE -->
   <div id="petals-container"></div>
 
-  <!-- AUDIO MP3 ("Flowers" de Miley Cyrus) -->
+  <!-- AUDIO DE FLOWERS - MILEY CYRUS -->
   <audio id="bg-music" loop preload="auto">
     <source src="https://ia801602.us.archive.org/11/items/miley-cyrus-flowers/Miley%20Cyrus%20-%20Flowers.mp3" type="audio/mpeg">
   </audio>
@@ -275,7 +275,7 @@
     <span id="music-text">Música: On</span>
   </div>
 
-  <!-- SOBRE CERRADO (BOTÓN DE APERTURA Y REPRODUCCIÓN) -->
+  <!-- SOBRE CERRADO 3D -->
   <div class="envelope-wrapper" id="envelope-wrapper" onclick="openEnvelope()">
     <div class="envelope-btn">
       <div class="envelope-flap" id="envelope-flap"></div>
@@ -313,7 +313,7 @@
       <span class="value">Sport Elegante</span>
     </div>
 
-    <!-- Cambia el número de teléfono aquí -->
+    <!-- Modifica el teléfono si es necesario -->
     <a href="https://wa.me/59899000000?text=¡Hola!%20Confirmo%20mi%20asistencia%20a%20la%20fiesta." class="btn-confirm" target="_blank">
       Confirmar Asistencia 📲
     </a>
@@ -352,21 +352,23 @@
       }
     }
 
-    // AL HACER CLIC EN EL SOBRE: ABRE EL SOBRE Y DISPARA LA MÚSICA
+    // ABRIR SOBRE, REPRODUCIR DESDE SEGUNDO 32 AL 50% DE VOLUMEN
     function openEnvelope() {
       // 1. Animación de apertura de la solapa
       const flap = document.getElementById('envelope-flap');
       flap.style.transform = 'rotateX(180deg)';
 
-      // 2. Arrancar la música desde el segundo 30
-      audio.currentTime = 30;
+      // 2. Configurar tiempo (32s) y volumen al 50% (0.5)
+      audio.currentTime = 32;
+      audio.volume = 0.5;
+
       audio.play().then(() => {
-        console.log("Música iniciada correctamente");
+        console.log("Música 'Flowers' iniciada en 0:32 al 50% de volumen");
       }).catch(err => {
-        console.log("Bloqueo de audio:", err);
+        console.log("Error al reproducir audio:", err);
       });
 
-      // 3. Mostrar la tarjeta e interfaz tras 400ms
+      // 3. Mostrar la tarjeta tras la animación
       setTimeout(() => {
         document.getElementById('envelope-wrapper').style.display = 'none';
         document.getElementById('card').style.display = 'block';
