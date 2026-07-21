@@ -27,7 +27,7 @@
       position: relative;
     }
 
-    /* CONTENEDOR DE PÉTALOS CAYENDO CONSTANTEMENTE */
+    /* CONTENEDOR DE PÉTALOS ROSAS CAYENDO CONSTANTEMENTE */
     #petals-container {
       position: fixed;
       top: 0;
@@ -64,7 +64,7 @@
       }
     }
 
-    /* CONTENEDOR DEL SOBRE INTERACTIVO */
+    /* CONTENEDOR DEL SOBRE 3D */
     .envelope-wrapper {
       cursor: pointer;
       text-align: center;
@@ -120,7 +120,6 @@
       z-index: 3;
     }
 
-    /* Texto contenido en el sobre */
     .envelope-text {
       position: relative;
       z-index: 5;
@@ -148,14 +147,15 @@
       animation: pulse 1.5s infinite;
     }
 
-    /* AUDIO / IFRAME OCULTO */
-    .hidden-audio {
-      display: none;
-      width: 0;
-      height: 0;
-      border: 0;
+    /* REPRODUCTOR OCULTO DE YOUTUBE */
+    #youtube-player-container {
+      position: absolute;
+      width: 1px;
+      height: 1px;
       opacity: 0;
       pointer-events: none;
+      overflow: hidden;
+      left: -9999px;
     }
 
     /* CONTROLES DE MÚSICA */
@@ -275,13 +275,10 @@
   <!-- CONTENEDOR DE PÉTALOS ROSAS CAYENDO -->
   <div id="petals-container"></div>
 
-  <!-- IFRAME OCULTO DE RESPALDO DE LA CANCIÓN "FLOWERS" -->
-  <div class="hidden-audio" id="audio-container"></div>
-
-  <!-- AUDIO MP3 DE ALTA CALIDAD -->
-  <audio id="bg-music" loop preload="auto">
-    <source src="https://ia801602.us.archive.org/11/items/miley-cyrus-flowers/Miley%20Cyrus%20-%20Flowers.mp3" type="audio/mpeg">
-  </audio>
+  <!-- REPRODUCTOR OCULTO DE YOUTUBE -->
+  <div id="youtube-player-container">
+    <div id="yt-player"></div>
+  </div>
 
   <!-- BOTÓN DE MÚSICA REPRODUCIR / PAUSAR -->
   <div class="music-control" id="music-btn" onclick="toggleMusic()">
@@ -289,7 +286,7 @@
     <span id="music-text">Música: On</span>
   </div>
 
-  <!-- BOTÓN CON FORMA DE SOBRE 3D -->
+  <!-- SOBRE CERRADO CON SOLAPA -->
   <div class="envelope-wrapper" id="envelope-wrapper" onclick="openEnvelope()">
     <div class="envelope-btn">
       <div class="envelope-flap" id="envelope-flap"></div>
@@ -327,13 +324,38 @@
       <span class="value">Sport Elegante</span>
     </div>
 
-    <!-- Recuerda actualizar el número de WhatsApp aquí -->
+    <!-- Modifica el teléfono si es necesario -->
     <a href="https://wa.me/59899000000?text=¡Hola!%20Confirmo%20mi%20asistencia%20a%20la%20fiesta." class="btn-confirm" target="_blank">
       Confirmar Asistencia 📲
     </a>
   </div>
 
+  <!-- CARGA LA API OFICIAL DE YOUTUBE -->
+  <script src="https://www.youtube.com/iframe_api"></script>
+
   <script>
+    let player;
+    let isApiReady = false;
+
+    // Se ejecuta automáticamente cuando carga la API de YouTube
+    function onYouTubeIframeAPIReady() {
+      player = new YT.Player('yt-player', {
+        height: '1',
+        width: '1',
+        videoId: 'G7KNmW9a75Y', // Flowers - Miley Cyrus
+        playerVars: {
+          'autoplay': 0,
+          'controls': 0,
+          'start': 30, // Inicia exactamente en el segundo 30
+          'loop': 1,
+          'playlist': 'G7KNmW9a75Y'
+        },
+        events: {
+          'onReady': () => { isApiReady = true; }
+        }
+      });
+    }
+
     // CREACIÓN CONSTANTE DE PÉTALOS ROSAS CAYENDO
     function createPetals() {
       const container = document.getElementById('petals-container');
@@ -364,29 +386,26 @@
       }
     }
 
-    // ABRIR SOBRE Y REPRODUCIR MÚSICA
+    // ABRIR SOBRE Y REPRODUCIR
     function openEnvelope() {
-      // 1. Efecto visual de apertura de solapa
+      // 1. Abrir solapa
       const flap = document.getElementById('envelope-flap');
       flap.style.transform = 'rotateX(180deg)';
 
-      // 2. Iniciar música en el segundo 30
-      const audio = document.getElementById('bg-music');
-      audio.currentTime = 30; // Arranca en el minuto 0:30 (Flowers)
-      
-      audio.play().catch(err => {
-        // Carga iframe invisible si el navegador bloquea audio HTML5
-        document.getElementById('audio-container').innerHTML = '<iframe src="https://archive.org/embed/miley-cyrus-flowers_202302?start=30&autoplay=1" width="1" height="1" frameborder="0"></iframe>';
-      });
+      // 2. Reproducir YouTube tras toque del usuario
+      if (player && typeof player.playVideo === 'function') {
+        player.seekTo(30);
+        player.playVideo();
+      }
 
-      // 3. Ocultar sobre y mostrar tarjeta tras animación
+      // 3. Cambiar de sobre a tarjeta
       setTimeout(() => {
         document.getElementById('envelope-wrapper').style.display = 'none';
         document.getElementById('card').style.display = 'block';
         document.getElementById('music-btn').style.display = 'flex';
       }, 400);
 
-      // 4. Lluvia de flores / confeti
+      // 4. Lluvia de confeti/flores
       var scalar = 2.2;
       var flower = confetti.shapeFromText({ text: '🌸', scalar });
       var rose = confetti.shapeFromText({ text: '🌹', scalar });
@@ -402,21 +421,22 @@
       });
     }
 
-    // BOTÓN ACTIVAR / PAUSAR MÚSICA
+    // BOTÓN MÚSICA ON / OFF
     function toggleMusic() {
-      const audio = document.getElementById('bg-music');
       const text = document.getElementById('music-text');
       const icon = document.getElementById('music-icon');
 
-      if (audio.paused) {
-        audio.play();
-        text.innerText = 'Música: On';
-        icon.innerText = '🎵';
-      } else {
-        audio.pause();
-        document.getElementById('audio-container').innerHTML = '';
-        text.innerText = 'Música: Off';
-        icon.innerText = '🔇';
+      if (player && typeof player.getPlayerState === 'function') {
+        const state = player.getPlayerState();
+        if (state === YT.PlayerState.PLAYING) {
+          player.pauseVideo();
+          text.innerText = 'Música: Off';
+          icon.innerText = '🔇';
+        } else {
+          player.playVideo();
+          text.innerText = 'Música: On';
+          icon.innerText = '🎵';
+        }
       }
     }
 
