@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lista de Asistentes - Fiesta</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background-color: #f4efe9;
+      color: #333;
+      padding: 20px;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: white;
+      padding: 25px;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    }
+    h1 {
+      color: #d4af37;
+      text-align: center;
+      margin-bottom: 5px;
+      font-size: 1.8rem;
+    }
+    .counter {
+      text-align: center;
+      font-weight: 700;
+      color: #555;
+      margin-bottom: 20px;
+    }
+    .search-box {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 20px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 1rem;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+    th, td {
+      padding: 12px 15px;
+      text-align: left;
+      border-bottom: 1px solid #eee;
+    }
+    th {
+      background-color: #d4af37;
+      color: white;
+      font-weight: 700;
+    }
+    tr:hover { background-color: #fcf8f2; }
+    .loading {
+      text-align: center;
+      font-weight: 600;
+      padding: 20px;
+      color: #888;
+    }
+    @media (max-width: 600px) {
+      th, td { font-size: 0.85rem; padding: 10px 8px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>Confirmados - Fiesta 60, 70 & 10</h1>
+    <div class="counter" id="counter">Cargando lista...</div>
+
+    <input type="text" class="search-box" id="searchInput" onkeyup="filterTable()" placeholder="Buscar por nombre o apellido...">
+
+    <div class="loading" id="loading">Obteniendo confirmaciones desde Google Sheets...</div>
+
+    <table id="attendeesTable" style="display: none;">
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>Apellido</th>
+          <th>Teléfono</th>
+          <th>Fecha Confirmación</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody"></tbody>
+    </table>
+  </div>
+
+  <script>
+    const API_URL = "https://api.sheetbest.com/sheets/7465b919-db5c-4d50-8ac7-d01f3e1fbe08";
+
+    async function loadAttendees() {
+      try {
+        const response = await fetch(API_URL);
+        const data = await response.json();
+
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('attendeesTable').style.display = 'table';
+        document.getElementById('counter').innerText = `Total Confirmados: ${data.length} persona(s)`;
+
+        const tableBody = document.getElementById('tableBody');
+        tableBody.innerHTML = '';
+
+        data.reverse().forEach(row => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td><strong>${row.Nombre || '-'}</strong></td>
+            <td>${row.Apellido || '-'}</td>
+            <td><a href="tel:${row.Telefono}" style="color: #25d366; text-decoration: none; font-weight: 600;">${row.Telefono || '-'}</a></td>
+            <td style="font-size: 0.85rem; color: #777;">${row.Fecha || '-'}</td>
+          `;
+          tableBody.appendChild(tr);
+        });
+      } catch (error) {
+        document.getElementById('loading').innerText = "Error al cargar los datos. Revisa la conexión.";
+      }
+    }
+
+    function filterTable() {
+      const input = document.getElementById('searchInput').value.toLowerCase();
+      const rows = document.querySelectorAll('#tableBody tr');
+
+      rows.forEach(row => {
+        const text = row.innerText.toLowerCase();
+        row.style.display = text.includes(input) ? '' : 'none';
+      });
+    }
+
+    window.onload = loadAttendees;
+  </script>
+</body>
+</html>
