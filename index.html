@@ -64,46 +64,98 @@
       }
     }
 
-    /* SOBRE (ESTADO INICIAL) */
-    .envelope-container {
+    /* CONTENEDOR DEL SOBRE INTERACTIVO */
+    .envelope-wrapper {
       cursor: pointer;
       text-align: center;
-      transition: transform 0.3s ease;
       z-index: 10;
+      perspective: 1000px;
     }
-    .envelope-container:hover {
-      transform: scale(1.03);
-    }
-    .envelope {
-      width: 290px;
+
+    .envelope-btn {
+      width: 300px;
       height: 200px;
-      background: linear-gradient(135deg, #d4af37, #f3e5ab, #b89228);
-      border-radius: 16px;
+      background: #d4af37;
+      position: relative;
+      border-radius: 0 0 12px 12px;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.25);
+      margin: 0 auto;
+      transition: transform 0.3s ease;
       display: flex;
-      flex-direction: column;
       justify-content: center;
       align-items: center;
-      box-shadow: 0 15px 30px rgba(0,0,0,0.2);
-      position: relative;
-      border: 2px solid #b89228;
     }
-    .envelope h1 {
-      font-family: 'Playfair Display', serif;
+
+    .envelope-wrapper:hover .envelope-btn {
+      transform: translateY(-5px) scale(1.02);
+    }
+
+    /* Solapa superior del sobre */
+    .envelope-flap {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 0;
+      height: 0;
+      border-left: 150px solid transparent;
+      border-right: 150px solid transparent;
+      border-top: 115px solid #b89228;
+      transform-origin: top;
+      transition: transform 0.5s ease;
+      z-index: 4;
+    }
+
+    /* Pliegues inferiores del sobre */
+    .envelope-btn::before {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0;
+      height: 0;
+      border-left: 150px solid #c49f2c;
+      border-right: 150px solid #c49f2c;
+      border-bottom: 100px solid #d4af37;
+      border-radius: 0 0 12px 12px;
+      z-index: 3;
+    }
+
+    /* Texto contenido en el sobre */
+    .envelope-text {
+      position: relative;
+      z-index: 5;
       color: #ffffff;
+      text-shadow: 1px 2px 4px rgba(0,0,0,0.4);
+      margin-top: 30px;
+    }
+
+    .envelope-text h1 {
+      font-family: 'Playfair Display', serif;
       font-size: 2.2rem;
       letter-spacing: 3px;
-      margin-bottom: 8px;
-      text-shadow: 1px 2px 4px rgba(0,0,0,0.3);
     }
-    .envelope .music-notes {
-      font-size: 1.8rem;
+
+    .envelope-text .music-notes {
+      font-size: 1.5rem;
+      margin-top: 4px;
     }
+
     .tap-hint {
-      margin-top: 18px;
+      margin-top: 22px;
       color: #555;
       font-size: 0.95rem;
       font-weight: 600;
       animation: pulse 1.5s infinite;
+    }
+
+    /* AUDIO / IFRAME OCULTO */
+    .hidden-audio {
+      display: none;
+      width: 0;
+      height: 0;
+      border: 0;
+      opacity: 0;
+      pointer-events: none;
     }
 
     /* CONTROLES DE MÚSICA */
@@ -220,10 +272,13 @@
 </head>
 <body>
 
-  <!-- CONTENEDOR DE PÉTALOS -->
+  <!-- CONTENEDOR DE PÉTALOS ROSAS CAYENDO -->
   <div id="petals-container"></div>
 
-  <!-- AUDIO DE FONDO ("Flowers" de Miley Cyrus) -->
+  <!-- IFRAME OCULTO DE RESPALDO DE LA CANCIÓN "FLOWERS" -->
+  <div class="hidden-audio" id="audio-container"></div>
+
+  <!-- AUDIO MP3 DE ALTA CALIDAD -->
   <audio id="bg-music" loop preload="auto">
     <source src="https://ia801602.us.archive.org/11/items/miley-cyrus-flowers/Miley%20Cyrus%20-%20Flowers.mp3" type="audio/mpeg">
   </audio>
@@ -234,16 +289,19 @@
     <span id="music-text">Música: On</span>
   </div>
 
-  <!-- SOBRE CERRADO -->
-  <div class="envelope-container" id="envelope" onclick="openEnvelope()">
-    <div class="envelope">
-      <h1>FIESTA!</h1>
-      <div class="music-notes">🎵🎶🎼</div>
+  <!-- BOTÓN CON FORMA DE SOBRE 3D -->
+  <div class="envelope-wrapper" id="envelope-wrapper" onclick="openEnvelope()">
+    <div class="envelope-btn">
+      <div class="envelope-flap" id="envelope-flap"></div>
+      <div class="envelope-text">
+        <h1>FIESTA!</h1>
+        <div class="music-notes">🎵🎶🎼</div>
+      </div>
     </div>
     <p class="tap-hint">Toca el sobre para abrir ✉️</p>
   </div>
 
-  <!-- TARJETA DESPLEGADA -->
+  <!-- TARJETA DE INVITACIÓN -->
   <div class="card" id="card">
     <h2>Los invitamos a festejar nuestro cambio de década (60 y 70)</h2>
     <div class="subtitle">Y nuestro Aniversario N° 10</div>
@@ -269,7 +327,7 @@
       <span class="value">Sport Elegante</span>
     </div>
 
-    <!-- Modifica el enlace de WhatsApp con el número correspondiente -->
+    <!-- Recuerda actualizar el número de WhatsApp aquí -->
     <a href="https://wa.me/59899000000?text=¡Hola!%20Confirmo%20mi%20asistencia%20a%20la%20fiesta." class="btn-confirm" target="_blank">
       Confirmar Asistencia 📲
     </a>
@@ -279,27 +337,22 @@
     // CREACIÓN CONSTANTE DE PÉTALOS ROSAS CAYENDO
     function createPetals() {
       const container = document.getElementById('petals-container');
-      const petalCount = 25; // Cantidad de pétalos simultáneos
+      const petalCount = 25;
 
       for (let i = 0; i < petalCount; i++) {
         const petal = document.createElement('div');
         petal.classList.add('petal');
         
-        // Tamaños variados
         const size = Math.random() * 12 + 10;
         petal.style.width = `${size}px`;
         petal.style.height = `${size * 1.4}px`;
-        
-        // Posición horizontal aleatoria
         petal.style.left = `${Math.random() * 100}%`;
         
-        // Duración y retraso de animación aleatorios
         const duration = Math.random() * 5 + 5;
         const delay = Math.random() * 5;
         petal.style.animationDuration = `${duration}s`;
         petal.style.animationDelay = `${delay}s`;
         
-        // Tonalidades de rosa variadas
         const pinkShades = [
           'radial-gradient(circle at 30% 30%, #ffc0cb, #ff69b4)',
           'radial-gradient(circle at 30% 30%, #ffb6c1, #db7093)',
@@ -311,22 +364,29 @@
       }
     }
 
-    // ABRIR SOBRE, INICIAR MÚSICA Y EXPLOSIÓN INICIAL DE FLORES
+    // ABRIR SOBRE Y REPRODUCIR MÚSICA
     function openEnvelope() {
-      // Ocultar sobre y mostrar tarjeta
-      document.getElementById('envelope').style.display = 'none';
-      document.getElementById('card').style.display = 'block';
+      // 1. Efecto visual de apertura de solapa
+      const flap = document.getElementById('envelope-flap');
+      flap.style.transform = 'rotateX(180deg)';
 
-      // Mostrar control flotante de música
-      document.getElementById('music-btn').style.display = 'flex';
-
-      // Reproducir canción "Flowers"
+      // 2. Iniciar música en el segundo 30
       const audio = document.getElementById('bg-music');
-      audio.play().catch(error => {
-        console.log("Autoplay bloqueado por el navegador:", error);
+      audio.currentTime = 30; // Arranca en el minuto 0:30 (Flowers)
+      
+      audio.play().catch(err => {
+        // Carga iframe invisible si el navegador bloquea audio HTML5
+        document.getElementById('audio-container').innerHTML = '<iframe src="https://archive.org/embed/miley-cyrus-flowers_202302?start=30&autoplay=1" width="1" height="1" frameborder="0"></iframe>';
       });
 
-      // Explosión inicial de flores/confeti
+      // 3. Ocultar sobre y mostrar tarjeta tras animación
+      setTimeout(() => {
+        document.getElementById('envelope-wrapper').style.display = 'none';
+        document.getElementById('card').style.display = 'block';
+        document.getElementById('music-btn').style.display = 'flex';
+      }, 400);
+
+      // 4. Lluvia de flores / confeti
       var scalar = 2.2;
       var flower = confetti.shapeFromText({ text: '🌸', scalar });
       var rose = confetti.shapeFromText({ text: '🌹', scalar });
@@ -342,7 +402,7 @@
       });
     }
 
-    // CONTROL DE ACTIVAR / PAUSAR MÚSICA
+    // BOTÓN ACTIVAR / PAUSAR MÚSICA
     function toggleMusic() {
       const audio = document.getElementById('bg-music');
       const text = document.getElementById('music-text');
@@ -354,12 +414,12 @@
         icon.innerText = '🎵';
       } else {
         audio.pause();
+        document.getElementById('audio-container').innerHTML = '';
         text.innerText = 'Música: Off';
         icon.innerText = '🔇';
       }
     }
 
-    // Iniciar lluvia de pétalos al cargar la página
     window.onload = createPetals;
   </script>
 </body>
