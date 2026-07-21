@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>¡Fiesta! - Invitación</title>
+  <!-- Fuentes elegantes y festivas -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Playfair+Display:ital,wght@0,600;1,400&display=swap" rel="stylesheet">
+  <!-- Librería para el efecto de flores/confeti -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      background: #f4efe9;
+      font-family: 'Montserrat', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow-x: hidden;
+      padding: 20px;
+    }
+
+    /* --- SOBRE (ESTADO INICIAL) --- */
+    .envelope-container {
+      cursor: pointer;
+      text-align: center;
+      transition: transform 0.3s ease;
+    }
+    .envelope-container:hover {
+      transform: scale(1.03);
+    }
+    .envelope {
+      width: 280px;
+      height: 190px;
+      background: #d4af37; /* Tono dorado */
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+      position: relative;
+      border: 2px solid #b89228;
+    }
+    .envelope h1 {
+      font-family: 'Playfair Display', serif;
+      color: #ffffff;
+      font-size: 2rem;
+      letter-spacing: 2px;
+      margin-bottom: 8px;
+    }
+    .envelope .music-notes {
+      font-size: 1.5rem;
+    }
+    .tap-hint {
+      margin-top: 15px;
+      color: #666;
+      font-size: 0.9rem;
+      animation: pulse 1.5s infinite;
+    }
+
+    /* --- TARJETA DE INVITACIÓN (OCULTA AL PRINCIPIO) --- */
+    .card {
+      display: none;
+      background: #ffffff;
+      max-width: 450px;
+      width: 100%;
+      padding: 35px 25px;
+      border-radius: 16px;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+      text-align: center;
+      border: 1px solid #eaeaea;
+      animation: fadeIn 1s ease forwards;
+    }
+
+    .card h2 {
+      font-family: 'Playfair Display', serif;
+      color: #2c3e50;
+      font-size: 1.4rem;
+      margin-bottom: 10px;
+      line-height: 1.4;
+    }
+    .card .subtitle {
+      color: #d4af37;
+      font-weight: 700;
+      font-size: 1.2rem;
+      margin-bottom: 25px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .info-group {
+      margin: 18px 0;
+      border-bottom: 1px dashed #eee;
+      padding-bottom: 12px;
+    }
+    .info-group:last-of-type {
+      border-bottom: none;
+    }
+    .label {
+      font-weight: 700;
+      color: #d4af37;
+      text-transform: uppercase;
+      font-size: 0.85rem;
+      letter-spacing: 1px;
+      display: block;
+      margin-bottom: 3px;
+    }
+    .value {
+      color: #444;
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
+    .sub-value {
+      color: #777;
+      font-size: 0.95rem;
+    }
+
+    /* BOTÓN DE CONFIRMACIÓN */
+    .btn-confirm {
+      display: inline-block;
+      margin-top: 20px;
+      background: #25d366; /* Verde WhatsApp */
+      color: white;
+      text-decoration: none;
+      padding: 14px 28px;
+      border-radius: 30px;
+      font-weight: 700;
+      font-size: 1rem;
+      box-shadow: 0 4px 15px rgba(37, 211, 102, 0.3);
+      transition: background 0.3s ease;
+    }
+    .btn-confirm:hover {
+      background: #1eb857;
+    }
+
+    /* ANIMACIONES */
+    @keyframes pulse {
+      0% { opacity: 0.6; }
+      50% { opacity: 1; }
+      100% { opacity: 0.6; }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- SOBRE CERRADO -->
+  <div class="envelope-container" id="envelope" onclick="openEnvelope()">
+    <div class="envelope">
+      <h1>FIESTA!</h1>
+      <div class="music-notes">🎵🎶🎼</div>
+    </div>
+    <p class="tap-hint">Toca el sobre para abrir ✉️</p>
+  </div>
+
+  <!-- TARJETA DESPLEGADA -->
+  <div class="card" id="card">
+    <h2>Los invitamos a festejar nuestro cambio de década (60 y 70)</h2>
+    <div class="subtitle">Y nuestro Aniversario N° 10</div>
+
+    <div class="info-group">
+      <span class="label">¿Cuándo?</span>
+      <span class="value">25 / 09 / 2026</span>
+    </div>
+
+    <div class="info-group">
+      <span class="label">¿Hora?</span>
+      <span class="value">21:00 hs</span>
+    </div>
+
+    <div class="info-group">
+      <span class="label">¿Dónde?</span>
+      <span class="value">AVA</span>
+      <div class="sub-value">Rambla Wilson 2180</div>
+    </div>
+
+    <div class="info-group">
+      <span class="label">Vestimenta</span>
+      <span class="value">Sport Elegante</span>
+    </div>
+
+    <!-- Modifica el enlace de WhatsApp con el número correspondiente -->
+    <a href="https://wa.me/59892405585?text=¡Hola!%20Confirmo%20mi%20asistencia%20a%20la%20fiesta." class="btn-confirm" target="_blank">
+      Confirmar Asistencia 📲
+    </a>
+  </div>
+
+  <script>
+    function openEnvelope() {
+      // Ocultar sobre y mostrar tarjeta
+      document.getElementById('envelope').style.display = 'none';
+      document.getElementById('card').style.display = 'block';
+
+      // Lanzar lluvia de flores/confeti
+      var scalar = 2;
+      var flower = confetti.shapeFromText({ text: '🌸', scalar });
+      var leaf = confetti.shapeFromText({ text: '🍃', scalar });
+      var sparkles = confetti.shapeFromText({ text: '✨', scalar });
+
+      confetti({
+        shapes: [flower, leaf, sparkles],
+        scalar: scalar,
+        particleCount: 40,
+        spread: 100,
+        origin: { y: 0.6 }
+      });
+    }
+  </script>
+</body>
+</html>
