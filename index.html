@@ -264,9 +264,9 @@
   <!-- PÉTALOS ROSAS CAYENDO CONSTANTEMENTE -->
   <div id="petals-container"></div>
 
-  <!-- AUDIO DE FLOWERS - MILEY CYRUS -->
+  <!-- AUDIO LOCAL (cancion.mp3 en la misma carpeta) -->
   <audio id="bg-music" loop preload="auto">
-    <source src="https://ia801602.us.archive.org/11/items/miley-cyrus-flowers/Miley%20Cyrus%20-%20Flowers.mp3" type="audio/mpeg">
+    <source src="cancion.mp3" type="audio/mpeg">
   </audio>
 
   <!-- BOTÓN PARA PAUSAR / REANUDAR MÚSICA -->
@@ -313,7 +313,6 @@
       <span class="value">Sport Elegante</span>
     </div>
 
-    <!-- Modifica el teléfono si es necesario -->
     <a href="https://wa.me/59899000000?text=¡Hola!%20Confirmo%20mi%20asistencia%20a%20la%20fiesta." class="btn-confirm" target="_blank">
       Confirmar Asistencia 📲
     </a>
@@ -363,7 +362,7 @@
       audio.volume = 0.5;
 
       audio.play().then(() => {
-        console.log("Música 'Flowers' iniciada en 0:32 al 50% de volumen");
+        console.log("Música iniciada correctamente");
       }).catch(err => {
         console.log("Error al reproducir audio:", err);
       });
